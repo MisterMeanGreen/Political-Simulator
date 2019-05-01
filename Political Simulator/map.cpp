@@ -1,8 +1,6 @@
 #include "map.h"
 
 
-map::coord::coord() {};
-map::coord::~coord() {};
 map::state::state(int p_id, std::wstring p_name) {
 	clique_id = p_id;
 	name = p_name;
@@ -39,11 +37,11 @@ map::state map::load_state(std::wifstream& file, wchar_t& last_char) { //Load a 
 	try { //Loading Pixels
 		load_until(L"{");
 		do {
-			coord temp_coord;
+			COORD temp_coord;
 			current_text = load_until(L",");
-			temp_coord.x = stoi(current_text);
+			temp_coord.X = static_cast<SHORT>(stoi(current_text));
 			current_text = load_until(L",}");
-			temp_coord.y = stoi(current_text);
+			temp_coord.Y = static_cast<SHORT>(stoi(current_text));
 			temp_state.pixels.push_back(temp_coord);
 		} while (last_char != '}');
 
@@ -53,6 +51,16 @@ map::state map::load_state(std::wifstream& file, wchar_t& last_char) { //Load a 
 	}
 	load_until(L"-}");
 	return temp_state;
+}
+COORD map::state::avg_coord() {
+	COORD temp_avg = { 0,0 };
+	for (auto crd : pixels) {
+		temp_avg.X += crd.X;
+		temp_avg.Y += crd.Y;
+	}
+	temp_avg.X /= static_cast<SHORT>(pixels.size());
+	temp_avg.Y /= static_cast<SHORT>(pixels.size());
+	return temp_avg;
 }
 void map::load_map_files() { //Loads in the map_display and the states information within the map
 	std::wifstream map_file(L"USA.txt");
@@ -78,7 +86,7 @@ void map::render_state(std::wstring wstr, wchar_t chr, WORD color) {
 		if (state.name == wstr) {
 			set_color(color);
 			for (auto pixel : state.pixels) {
-				set_pos((SHORT)pixel.x, (SHORT)pixel.y);
+				set_pos(pixel);
 				std::wcout << chr;
 			}
 		}

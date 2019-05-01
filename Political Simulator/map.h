@@ -7,20 +7,21 @@
 
 #include "helper.h"
 class map {
+public:
 private:
-	struct coord { coord(); ~coord(); int x; int y; };
 	class state {
 	public:
 		int population;
 		int income;
 		std::vector<std::wstring> neighbors; //neighboring states
-		std::vector<coord> pixels; //pixels on console
+		std::vector<COORD> pixels; //pixels on console
 		int clique_id; //current clique id controlling it
 		std::wstring name; //name of state
 		state(int p_id, std::wstring p_name);
 		state(int p_id);
 		~state();
 		const auto& get_neighbors();
+		COORD avg_coord(); //Calculates the average coordinates of the state
 	};
 	state load_state(std::wifstream& file, wchar_t& last_char); //Load a singular state from a file
 

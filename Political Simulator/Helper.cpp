@@ -1,6 +1,7 @@
 #pragma once
 #include "helper.h"
 HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+DWORD num_read;
 wchar_t wget(std::wifstream& file) {
 	char bit1;
 	char bit2;
@@ -40,9 +41,25 @@ found_beg_quote:
 found_end_quote:
 	return text.substr(0, text.size() - 1);
 };
-BOOL set_color(WORD color) {
-	return SetConsoleTextAttribute(hConsole, color);
+void set_color(WORD color) {
+	if (!SetConsoleTextAttribute(hConsole, color)) {
+		throw L"ERROR : Set color error\nColor : " + color;
+	}
 }
-BOOL set_pos(SHORT x, SHORT y) {
-	return SetConsoleCursorPosition(hConsole, { x,y });
+void set_pos(COORD crd) {
+	if (!SetConsoleCursorPosition(hConsole, crd)) {
+		//throw L"ERROR : Set console position error\nX : " + crd.X + L"\nY : " + crd.Y;
+	}
+}
+wchar_t get_char(COORD crd)
+{
+	wchar_t temp;
+	ReadConsoleOutputCharacter(hConsole, &temp,1,crd,&num_read);
+	return temp;
+}
+WORD get_charinfo(COORD crd)
+{
+	WORD temp;
+	ReadConsoleOutputAttribute(hConsole, &temp, 1, crd, &num_read);
+	return temp;
 }

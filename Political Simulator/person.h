@@ -36,7 +36,7 @@ public:
 	void generate_random_name();
 	void clear_traits();
 	int add_stat(uint8_t stat, int amount); //Change a one of the stats by amount	
-	int get_stat(uint8_t stat);
+	int get_stat(uint8_t stat); //Return stat as defined by enum
 	std::wstring get_first_name();
 	std::wstring get_last_name();
 	std::wstring get_name();
