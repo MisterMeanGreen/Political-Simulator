@@ -152,18 +152,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="effect.h" />
-    <ClInclude Include="Helper.h" />
+    <ClInclude Include="helper.h" />
     <ClInclude Include="map.h" />
     <ClInclude Include="person.h" />
-    <ClInclude Include="Unicode.h" />
+    <ClInclude Include="unicode.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="effect.cpp" />
-    <ClCompile Include="Helper.cpp" />
+    <ClCompile Include="helper.cpp" />
     <ClCompile Include="map.cpp" />
     <ClCompile Include="person.cpp" />
-    <ClCompile Include="Political Simulator.cpp" />
-    <ClCompile Include="Unicode.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="unicode.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
