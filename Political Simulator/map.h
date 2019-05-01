@@ -5,7 +5,7 @@
 #include <fstream>
 #include <Windows.h>
 
-#include "Helper.h"
+#include "helper.h"
 class map {
 private:
 	struct coord { coord(); ~coord(); int x; int y; };

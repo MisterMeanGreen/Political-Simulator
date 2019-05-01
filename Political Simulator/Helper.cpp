@@ -1,5 +1,5 @@
 #pragma once
-#include "Helper.h"
+#include "helper.h"
 HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 wchar_t wget(std::wifstream& file) {
 	char bit1;

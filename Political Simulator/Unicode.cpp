@@ -1,6 +1,6 @@
 #pragma once
 //Magic S*#! to make wcout, and wcin to work
-#include "Unicode.h"
+#include "unicode.h"
 
 void init_locale(void)
 // Does magic so that wcout can work.
