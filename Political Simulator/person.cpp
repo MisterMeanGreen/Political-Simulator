@@ -1,43 +1,12 @@
-#pragma once
-//Where the main classes of our program go
-//Such as USA, State, Person, and effect
-#include "Standards.h"
+#include "person.h"
+
 std::random_device rand_dev;
 std::default_random_engine gen(rand_dev());
 std::uniform_int_distribution<int> dist(0, 99);
-effect::effect(std::wstring p_name, std::wstring p_desc, int p_diplo, int p_int, int p_app, int p_comm) {
-	name = p_name;
-	description = p_desc;
-	diplomacy = p_diplo;
-	intrigue = p_int;
-	appeal = p_app;
-	command = p_comm;
-}
-effect::effect() {
-	name = L"NULL";
-	description = L"NULL";
-	diplomacy = 0;
-	intrigue = 0;
-	appeal = 0;
-	command = 0; //Debug values to easily tell what values have been set when debugging
-}
-effect::~effect() {}
-bool effect::operator==(effect x) {
-	return name == x.name;
-}
-bool effect::operator!=(effect x) {
-	return name != x.name;
-}
-bool effect::contains_ntrait(std::wstring s) {
-	for (auto x : negative_traits)
-		if (x == s)
-			return true;
-	return false;
-}
-std::vector<effect> traits;
-std::vector<std::wstring> m_names;
-std::vector<std::wstring> f_names;
-std::vector<std::wstring> l_names;
+extern std::vector<effect> traits;
+extern std::vector<std::wstring> m_names;
+extern std::vector<std::wstring> f_names;
+extern std::vector<std::wstring> l_names;
 void person::raw_add(effect trait) {
 	traits.push_back(trait);
 	diplomacy += traits.back().diplomacy;
@@ -106,7 +75,7 @@ bool person::add_trait(effect trait) { //Add a single trait
 void person::generate_random_traits() {//Generates Randomized Traits
 	std::uniform_int_distribution<int> rand(-4, 4);
 	std::uniform_int_distribution<int> rand_trait_num(0, ::traits.size() - 1);
-	for (int x = 0; x < (age / 10) + rand(gen); x++) {
+	for (int x = 0; x < (static_cast<int>(age) / 10) + rand(gen); x++) {
 		while (!add_trait_no_remove(::traits[rand_trait_num(gen)]));
 	}
 }
@@ -331,89 +300,4 @@ effect person::load_trait(std::wifstream& file, wchar_t& last_char) { //Loads tr
 		throw L"Failed to load trait\n" + error_recieved + L"\nName : L" + temp_effect.name + L"\nDesc : L" + temp_effect.description + L"\nDiplomacy : L" + std::to_wstring(temp_effect.diplomacy) + L"\nIntrigue : L" + std::to_wstring(temp_effect.intrigue) + L"\nAppeal : L" + std::to_wstring(temp_effect.appeal) + L"\nCommand : L" + std::to_wstring(temp_effect.command);
 	}
 	return temp_effect;
-}
-std::wostream &operator<<(std::wostream& os, effect const &temp_effect) {
-	return os << L"\nName : L" + temp_effect.name << L"\nDesc : L" + temp_effect.description << L"\nDiplomacy : L" << std::to_wstring(temp_effect.diplomacy) << L"\nIntrigue : L" << std::to_wstring(temp_effect.intrigue) << L"\nAppeal : L" << std::to_wstring(temp_effect.appeal) << L"\nCommand : L" << std::to_wstring(temp_effect.command);
-}
-map::coord::coord() {};
-map::coord::~coord() {};
-map::state::state(int p_id, std::wstring p_name) {
-	clique_id = p_id;
-	name = p_name;
-}
-map::state::state(int p_id) {
-	clique_id = p_id;
-}
-map::state::~state() {}
-const auto& map::state::get_neighbors() {
-	return neighbors;
-}
-map::state map::load_state(std::wifstream& file, wchar_t& last_char) { //Load a singular state
-	auto load_until = [&](std::wstring chars) { return search_until(file, chars, last_char); };
-	auto load_string = [&]() { return load_quotes(file, last_char); };
-	std::wstring current_text; //current text read
-	state temp_state(0);
-	try {//Loading in name
-		current_text = load_string();
-		temp_state.name = current_text;
-	}
-	catch (std::wstring error_recieved) {
-		throw L"ERROR : Failed to load state\n" + error_recieved + L"\n" + current_text;
-	}
-	try {//Loading neighbors
-		load_until(L"-");
-		do {
-			temp_state.neighbors.push_back(load_string());
-			load_until(L",-");
-		} while (last_char != '-');
-	}
-	catch (std::wstring error_recieved) {
-		throw L"ERROR : Failed to find neighbors when loading state : L" + error_recieved + L"\n" + temp_state.name;
-	}
-	try { //Loading Pixels
-		load_until(L"{");
-		do {
-			coord temp_coord;
-			current_text = load_until(L",");
-			temp_coord.x = stoi(current_text);
-			current_text = load_until(L",}");
-			temp_coord.y = stoi(current_text);
-			temp_state.pixels.push_back(temp_coord);
-		} while (last_char != '}');
-
-	}
-	catch (std::wstring error_recieved) {
-		throw L"ERROR : Failed to load pixels \n" + error_recieved;
-	}
-	load_until(L"-}");
-	return temp_state;
-}
-void map::load_map_files() { //Loads in the map_display and the states information within the map
-	std::wifstream map_file(L"USA.txt");
-	wchar_t last_char; //Last character found
-	auto load_until = [&](std::wstring chars) { return search_until(map_file, chars, last_char); };
-	auto load_string = [&]() { return load_quotes(map_file, last_char); };
-	try {
-		load_until(L"M");
-		load_until(L"{");
-		display = load_until(L"}");
-	}
-	catch (std::wstring exp) {
-		throw L"ERROR : Failed to read display for map_file\n" + exp + L"\nData Read : " + display;
-	}
-	load_until(L"D");
-	load_until(L"{");
-	while (last_char != '}') {
-		states.push_back(load_state(map_file, last_char));
-	}
-}
-void map::render_state(std::wstring wstr, wchar_t chr, WORD color) {
-	for (auto state : states)
-		if (state.name == wstr) {
-			set_color(color);
-			for (auto pixel : state.pixels) {
-				set_pos((SHORT)pixel.x, (SHORT)pixel.y);
-				std::wcout << chr;
-			}
-		}
 }
