@@ -6,6 +6,7 @@
 #include <Windows.h>
 
 #include "helper.h"
+#include "cursor.h"
 class map {
 public:
 private:

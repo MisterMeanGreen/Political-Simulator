@@ -84,9 +84,9 @@ void map::load_map_files() { //Loads in the map_display and the states informati
 void map::render_state(std::wstring wstr, wchar_t chr, WORD color) {
 	for (auto state : states)
 		if (state.name == wstr) {
-			set_color(color);
+			cursor::set_cur_color(color);
 			for (auto pixel : state.pixels) {
-				set_pos(pixel);
+				cursor::set_cur_pos(pixel);
 				std::wcout << chr;
 			}
 		}
