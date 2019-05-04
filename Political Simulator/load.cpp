@@ -1,6 +1,6 @@
 #pragma once
 //Functions that are called in multiple class files
-#include "helper.h"
+#include "load.h"
 wchar_t wget(std::wifstream& file) {
 	char bit1;
 	char bit2;

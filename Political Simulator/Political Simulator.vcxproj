@@ -151,17 +151,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="clique.h" />
     <ClInclude Include="cursor.h" />
     <ClInclude Include="effect.h" />
-    <ClInclude Include="helper.h" />
+    <ClInclude Include="load.h" />
     <ClInclude Include="map.h" />
     <ClInclude Include="person.h" />
     <ClInclude Include="unicode.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="clique.cpp" />
     <ClCompile Include="cursor.cpp" />
     <ClCompile Include="effect.cpp" />
-    <ClCompile Include="helper.cpp" />
+    <ClCompile Include="load.cpp" />
     <ClCompile Include="map.cpp" />
     <ClCompile Include="person.cpp" />
     <ClCompile Include="main.cpp" />

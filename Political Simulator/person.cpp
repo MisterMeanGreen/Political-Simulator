@@ -1,25 +1,25 @@
 #include "person.h"
 
-std::random_device rand_dev;
-std::default_random_engine gen(rand_dev());
-std::uniform_int_distribution<int> dist(0, 99);
-extern std::vector<effect> traits;
-extern std::vector<std::wstring> m_names;
-extern std::vector<std::wstring> f_names;
-extern std::vector<std::wstring> l_names;
+std::vector<effect>  person::traits_list;
+std::vector<std::wstring> person::m_names;
+std::vector<std::wstring> person::f_names;
+std::vector<std::wstring> person::l_names;
+std::random_device person::rand_dev;
+std::default_random_engine person::gen(rand_dev());
+std::uniform_int_distribution<int> person::dist(0, 99);
 void person::raw_add(effect trait) {
 	traits.push_back(trait);
-	diplomacy += traits.back().diplomacy;
-	intrigue += traits.back().intrigue;
-	appeal += traits.back().appeal;
-	command += traits.back().command;
+	add_stat(effect::stat_ids::diplomacy, traits.back().get_stat(effect::stat_ids::diplomacy));
+	add_stat(effect::stat_ids::intrigue, traits.back().get_stat(effect::stat_ids::intrigue));
+	add_stat(effect::stat_ids::appeal, traits.back().get_stat(effect::stat_ids::appeal));
+	add_stat(effect::stat_ids::command, traits.back().get_stat(effect::stat_ids::command));
 }
 bool person::remove_trait(uint16_t trait_num) {//Removes a Single Trait at Postion X
 	if (trait_num < traits.size() - 1) {
-		diplomacy -= traits[trait_num].diplomacy;
-		intrigue -= traits[trait_num].intrigue;
-		appeal -= traits[trait_num].appeal;
-		command -= traits[trait_num].command;
+		add_stat(effect::stat_ids::diplomacy, -traits.back().get_stat(effect::stat_ids::diplomacy));
+		add_stat(effect::stat_ids::intrigue, -traits.back().get_stat(effect::stat_ids::intrigue));
+		add_stat(effect::stat_ids::appeal, -traits.back().get_stat(effect::stat_ids::appeal));
+		add_stat(effect::stat_ids::command, -traits.back().get_stat(effect::stat_ids::command));
 		traits.erase(traits.begin() + trait_num);
 		return true;
 	}
@@ -74,9 +74,9 @@ bool person::add_trait(effect trait) { //Add a single trait
 }
 void person::generate_random_traits() {//Generates Randomized Traits
 	std::uniform_int_distribution<int> rand(-4, 4);
-	std::uniform_int_distribution<int> rand_trait_num(0, ::traits.size() - 1);
+	std::uniform_int_distribution<int> rand_trait_num(0, traits_list.size() - 1);
 	for (int x = 0; x < (static_cast<int>(age) / 10) + rand(gen); x++) {
-		while (!add_trait_no_remove(::traits[rand_trait_num(gen)]));
+		while (!add_trait_no_remove(traits_list[rand_trait_num(gen)]));
 	}
 }
 void person::generate_random_stats() {
@@ -84,68 +84,24 @@ void person::generate_random_stats() {
 	std::uniform_int_distribution<int> rand_total(0, (age / 2) + 10); //Random total amount you can upgrade
 	auto total = rand_total(gen);
 	for (auto x = 0; x < total; x++)
-		switch (rand_stat(gen)) { //Randomize Stat Generation
-		case 0:
-			diplomacy++;
-			break;
-		case 1:
-			intrigue++;
-			break;
-		case 2:
-			appeal++;
-			break;
-		case 3:
-			command++;
-			break;
-		}
+		stats[gen() % 4]++;
 }
-void person::generate_random_name() {
-	if (gender == pol_genders::Male) {
-		std::uniform_int_distribution<int> ListSize(0, m_names.size() - 1);
-		first_name = m_names[ListSize(gen)];
-
-	}
-	else {
-		std::uniform_int_distribution<int> ListSize(0, f_names.size() - 1);
-		first_name = f_names[ListSize(gen)];
-	}
-	std::uniform_int_distribution<int> ListSize(0, l_names.size() - 1);
-	last_name = l_names[ListSize(gen)];
+template<typename T>
+T person::get_random_item(std::vector<T> list) {
+	return list[gen() % list.size()];
 }
 void person::clear_traits() {
-	while (!traits.empty()) {
-		diplomacy -= traits.back().diplomacy;
-		intrigue -= traits.back().intrigue;
-		appeal -= traits.back().appeal;
-		command -= traits.back().command;
-		traits.pop_back();
-	}
+	while (!traits.empty()) remove_trait(traits.back());
 }
-int person::add_stat(uint8_t stat, int amount) { //Change a one of the stats by amount
-	switch (stat) {
-	case pol_stat_ids::diplomacy:
-		return diplomacy += amount;
-	case pol_stat_ids::intrigue:
-		return intrigue += amount;
-	case pol_stat_ids::appeal:
-		return appeal += amount;
-	case pol_stat_ids::command:
-		return command += amount;
-	}
-	return 0;
+int person::add_stat(size_t stat, int amount) { //Change a one of the stats by amount
+	return stats[stat] += amount;
 }
-int person::get_stat(uint8_t stat) {
-	switch (stat) {
-	case pol_stat_ids::diplomacy:
-		return (diplomacy + abs(diplomacy)) / 2;
-	case pol_stat_ids::intrigue:
-		return (intrigue + abs(intrigue)) / 2;
-	case pol_stat_ids::appeal:
-		return (appeal + abs(appeal)) / 2;
-	case pol_stat_ids::command:
-		return (command + abs(command)) / 2;
-	}
-	return -1;
+int person::get_stat(size_t stat) {
+	return stats[stat];
+}
+int person::set_stat(size_t stat, int amount)
+{
+	return stats[stat] = amount;
 }
 uint32_t person::pub_id;
 std::wstring person::get_first_name() { return first_name; }
@@ -155,52 +111,28 @@ int person::add_money(int amount) { return money += amount; }
 int person::get_money() { return money; }
 int person::get_age() { return age; }
 uint32_t person::get_id() { return id; }
-std::wstring person::get_gender() { return (gender == pol_genders::Male ? L"male" : L"female"); }
+bool person::get_gender() { return gender == male; }
 auto& person::operator[](uint32_t c) { return traits[c]; }
-auto& person::trait_list() { return traits; }
 person::person(std::wstring p_first_name, std::wstring p_last_name, uint32_t p_age, bool p_gender, int p_money, int p_diplomacy, int p_intrigue, int p_appeal, int p_command) : id(++pub_id) {
+	stats.resize(effect::stat_ids::STAT_SIZE);
 	first_name = p_first_name;
 	last_name = p_last_name;
 	age = p_age;
 	gender = p_gender;
 	money = p_money;
-	diplomacy = p_diplomacy;
-	intrigue = p_intrigue;
-	appeal = p_appeal;
-	command = p_command;
+	stats[effect::stat_ids::diplomacy] = p_diplomacy;
+	stats[effect::stat_ids::intrigue] = p_intrigue;
+	stats[effect::stat_ids::appeal] = p_appeal;
+	stats[effect::stat_ids::command] = p_command;
 	generate_random_traits();
-} //Manual Stats
-person::person(std::wstring p_first_name, std::wstring p_last_name, uint32_t p_age, bool p_gender, int p_money) : id(++pub_id) {
-	first_name = p_first_name;
-	last_name = p_last_name;
-	age = p_age;
-	gender = p_gender;
-	money = p_money;
-	diplomacy = 0;
-	intrigue = 0;
-	appeal = 0;
-	command = 0;
-	generate_random_stats();
-	generate_random_traits();
-} //Generate Random Traits and Stats
-person::person(uint32_t p_age, int p_money) : id(++pub_id) {
-	age = p_age;
-	int j = dist(gen);
-	if (j < 95) {
-		gender = pol_genders::Male;
-	}
-	else {
-		gender = pol_genders::Female;
-	}
-	generate_random_name();
-	money = p_money;
-	diplomacy = 0;
-	intrigue = 0;
-	appeal = 0;
-	command = 0;
-	generate_random_stats();
-	generate_random_traits();
-} //Generate Random Traits and Stats
+} 
+person::person(std::wstring p_first_name, std::wstring p_last_name, uint32_t p_age, bool p_gender, int p_money) : person(p_first_name,p_last_name,p_age,p_gender,p_money,0,0,0,0) {} 
+person::person(uint32_t p_age, int p_money) : person(L"NULL",get_random_item(l_names) , p_age,(dist(gen) < 90 ? male : female), p_money, 0, 0, 0, 0) {
+	if (gender == male)
+		first_name = get_random_item(m_names);
+	else
+		first_name = get_random_item(f_names);
+} 
 void person::load_player_files() { //Loads traits file, names for both females and males, and the last names
 	std::wifstream file(L"traits.txt");
 	std::wstring current_text;
@@ -211,7 +143,7 @@ void person::load_player_files() { //Loads traits file, names for both females a
 		load_until(L"T");
 		load_until(L"{");
 		while (last_char != L'}') { //Load traits
-			::traits.push_back(person::load_trait(file, last_char));
+			traits_list.push_back(person::load_trait(file, last_char));
 		}
 	}
 	catch (std::wstring error_recieved) {
@@ -252,6 +184,7 @@ void person::load_player_files() { //Loads traits file, names for both females a
 }
 effect person::load_trait(std::wifstream& file, wchar_t& last_char) { //Loads trait from file
 	effect temp_effect;
+	std::vector<std::wstring> effect_stat_id_names({ L"Diplomacy",L"Intrigue",L"Appeal",L"Command" });
 	try {
 		std::wstring current_text; //Text currently read
 		auto load_until = [&](std::wstring chars) { return search_until(file, chars, last_char); };
@@ -260,33 +193,14 @@ effect person::load_trait(std::wifstream& file, wchar_t& last_char) { //Loads tr
 		load_until(L",");
 		temp_effect.description = load_string();
 		load_until(L",");
-		try {
-			current_text = load_until(L",");
-			temp_effect.diplomacy = stoi(current_text);
-		}
-		catch (...) {
-			throw L"ERROR : Cannot Assign Diplomacy \"" + current_text + L"\" could not be assigned.";
-		}
-		try {
-			current_text = load_until(L",");
-			temp_effect.intrigue = stoi(current_text);
-		}
-		catch (...) {
-			throw L"ERROR : Cannot Assign Intrigue \"" + current_text + L"\" could not be assigned.";
-		}
-		try {
-			current_text = load_until(L",");
-			temp_effect.appeal = stoi(current_text);
-		}
-		catch (...) {
-			throw L"ERROR : Cannot Assign Appeal \"" + current_text + L"\" could not be assigned.";
-		}
-		try {
-			current_text = load_until(L",");
-			temp_effect.command = stoi(current_text);
-		}
-		catch (...) {
-			throw L"ERROR : Cannot Assign Command \"" + current_text + L"\" could not be assigned.";
+		for (size_t current_stat_id = 0; current_stat_id < 4; current_stat_id++) {
+			try {
+				current_text = load_until(L",");
+				temp_effect.set_stat(current_stat_id, stoi(current_text));
+			}
+			catch (...) {
+				throw L"ERROR : Cannot Assign " + effect_stat_id_names[current_stat_id] + L"\n\"" + current_text + L"\" could not be assigned.";
+			}
 		}
 		load_until(L"[");
 		do {
@@ -297,7 +211,7 @@ effect person::load_trait(std::wifstream& file, wchar_t& last_char) { //Loads tr
 		load_until(L",}");
 	}
 	catch (std::wstring error_recieved) {
-		throw L"Failed to load trait\n" + error_recieved + L"\nName : L" + temp_effect.name + L"\nDesc : L" + temp_effect.description + L"\nDiplomacy : L" + std::to_wstring(temp_effect.diplomacy) + L"\nIntrigue : L" + std::to_wstring(temp_effect.intrigue) + L"\nAppeal : L" + std::to_wstring(temp_effect.appeal) + L"\nCommand : L" + std::to_wstring(temp_effect.command);
+		throw L"Failed to load trait\n" + error_recieved + L"\nName : L" + temp_effect.name + L"\nDesc : L" + temp_effect.description + L"\nDiplomacy : L" + std::to_wstring(temp_effect.get_stat(effect::stat_ids::diplomacy)) + L"\nIntrigue : L" + std::to_wstring(temp_effect.get_stat(effect::stat_ids::intrigue)) + L"\nAppeal : L" + std::to_wstring(temp_effect.get_stat(effect::stat_ids::appeal)) + L"\nCommand : L" + std::to_wstring(temp_effect.get_stat(effect::stat_ids::command));
 	}
 	return temp_effect;
 }
