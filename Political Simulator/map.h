@@ -11,8 +11,6 @@
 #include "state.h"
 namespace pol_sim {
 	class map {
-		//Used to indicate when state_at fails
-		static state nullstate;
 
 		//Where states are stored
 		std::vector<state> states;
@@ -34,10 +32,12 @@ namespace pol_sim {
 
 		//Rendering
 		void render_state(std::wstring wstr, wchar_t chr, WORD color); //Render a Single State from the Map
+		static void render_state(state s, wchar_t chr, WORD color); //Render a Single State from the Map
 		std::wstring get_display();
 
 		//Getting specific state
-		state& state_at(COORD crd); //Returns state that contains the coordinate crd otherwise returns "NULL"
-		state& operator[](size_t pos); //Returns state at pos
+		state* state_at(COORD crd); //Returns state that contains the coordinate crd otherwise returns "NULL"
+		state* operator[](size_t pos); //Returns state at pos
+		state* operator[](std::wstring s_name); //Returns state at pos
 	};
 }

@@ -1,6 +1,5 @@
 #include "map.h"
 namespace pol_sim {
-	state map::nullstate = state();
 	map::map(std::wifstream& file) {
 		load_map_files(file);
 	}
@@ -52,7 +51,7 @@ namespace pol_sim {
 			throw L"ERROR : Failed to load pixels \n" + error_recieved;
 		}
 		load_until(L"-}");
-		state temp_state(0, temp_state_name, temp_state_neighbors, temp_state_pixels);
+		state temp_state(state::null, temp_state_name, temp_state_neighbors, temp_state_pixels);
 		return temp_state;
 	}
 	void map::load_map_files(std::wifstream& file) { //Loads in the map_display and the states information within the map
@@ -83,17 +82,32 @@ namespace pol_sim {
 				}
 			}
 	}
-	state& map::state_at(COORD crd)
+	void map::render_state(state s, wchar_t chr, WORD color)
+	{
+		cursor::set_cur_color(color);
+		for (auto pixel : s.get_pixels()) {
+			cursor::set_cur_pos(pixel);
+			std::wcout << chr;
+		}
+	}
+	state* map::state_at(COORD crd)
 	{
 		for (auto& state : states)
 			for (auto& pixel : state.get_pixels())
 				if (crd.X == pixel.X && crd.Y == pixel.Y)
-					return state;
-		return nullstate;
+					return &state;
+		return nullptr;
 	}
-	state& map::operator[](size_t pos)
+	state* map::operator[](size_t pos)
 	{
-		return states[pos];
+		return &states[pos];
+	}
+	state* map::operator[](std::wstring s_name)
+	{
+		for (auto& state : states)
+			if (state.get_name() == s_name)
+				return &state;
+		return nullptr;
 	}
 	std::wstring map::get_display()
 	{

@@ -3,7 +3,11 @@
 #include <string>
 #include <Windows.h>
 
+
+
 namespace pol_sim {
+	class clique;
+
 	class state {
 		int population;
 		int income;
@@ -11,6 +15,8 @@ namespace pol_sim {
 		std::vector<std::wstring> neighbors; //neighboring states
 		std::wstring name; //name of state
 		std::vector<COORD> pixels; //pixels on console
+
+		clique* my_clique;
 	public:
 		enum {
 			null = -1
@@ -32,9 +38,11 @@ namespace pol_sim {
 		const std::vector<COORD>& get_pixels();
 		std::wstring get_name(); //returns name
 		size_t get_clique_id();
+		clique* get_my_clique();
 
 		//Set
 		size_t set_clique_id(size_t id);
 		std::wstring set_name(std::wstring new_name); //returns name
+		void set_my_clique(clique* c);
 	};
 }

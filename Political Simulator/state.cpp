@@ -35,6 +35,10 @@ namespace pol_sim {
 	{
 		return clique_id;
 	}
+	clique * state::get_my_clique()
+	{
+		return my_clique;
+	}
 	size_t state::set_clique_id(size_t id)
 	{
 		return clique_id = id;
@@ -42,6 +46,10 @@ namespace pol_sim {
 	std::wstring state::set_name(std::wstring new_name)
 	{
 		return name = new_name;
+	}
+	void state::set_my_clique(clique* c)
+	{
+		my_clique = c;
 	}
 	COORD state::avg_coord() {
 		COORD temp_avg = { 0,0 };
