@@ -4,20 +4,31 @@
 #include <string>
 #include <atomic>
 
+namespace pol_sim {
+	class clique
+	{
 
-class clique
-{
-	static int pub_clique_id;
-	std::vector<state*> controlled_land;
-	std::vector<std::shared_ptr<person>> internal_people;
-	int leader_id;
-	int clique_id;
-public:
+		static size_t pub_clique_id;
 
-	std::wstring name;
-	clique(std::wstring n,int l_id);
-	~clique();
-	bool add_land(std::shared_ptr<state> s); //Adds a state, return true if it can add state;
-	bool remove_land(std::shared_ptr<state> s); //Remove a state, returns true if removed state, returns false if it cannot find a state
-};
+		//Vectors relating to state
+		std::vector<state*> controlled_land;
+		std::vector<person*> internal_people;
 
+		//Stats relating to state
+		int leader_id;
+		const size_t clique_id;
+		std::wstring name;
+	public:
+		//Constructor
+		clique(std::wstring n, int l_id);
+		~clique();
+
+		//Get
+		size_t get_id();
+		std::wstring get_name();
+
+		//Land
+		size_t add_land(state* s); //Adds a state, return previous owner (or itself if no previous owner)
+		bool remove_land(state* s); //Remove a state, returns true if removed state, returns false if it cannot find a state
+	};
+}
