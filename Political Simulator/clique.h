@@ -23,10 +23,10 @@ namespace pol_sim {
 		std::wstring name;
 
 		wchar_t symbol;
-		DWORD color;
+		WORD color;
 	public:
 		//Constructor
-		clique(std::wstring n, wchar_t s, DWORD c);
+		clique(std::wstring n, wchar_t s, WORD c);
 		~clique();
 
 		//Get

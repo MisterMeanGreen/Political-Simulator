@@ -2,7 +2,7 @@
 
 namespace pol_sim {
 	size_t clique::pub_clique_id = 0;
-	clique::clique(std::wstring n, wchar_t s, DWORD c) : clique_id(++pub_clique_id)
+	clique::clique(std::wstring n, wchar_t s, WORD c) : clique_id(++pub_clique_id)
 	{
 		symbol = s;
 		color = c;
