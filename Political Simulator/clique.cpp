@@ -28,6 +28,7 @@ namespace pol_sim {
 
 		size_t temp = s->get_clique_id();
 		s->set_clique_id(clique_id);
+		controlled_land.push_back(s);
 		return temp;
 
 	}
