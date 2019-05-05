@@ -27,6 +27,7 @@ public:
 	std::wstring description;
 	std::vector<std::wstring> negative_traits; //Defines traits that the current trait cannot be in conjunction with
 
+	//Comparison
 	bool operator==(effect x);
 	bool operator!=(effect x);
 	bool contains_ntrait(std::wstring s);

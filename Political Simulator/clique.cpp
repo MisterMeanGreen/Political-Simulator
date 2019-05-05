@@ -12,7 +12,7 @@ clique::clique(std::wstring n,int l_id) : clique_id(++pub_clique_id)
 clique::~clique()
 {
 }
-bool clique::add_land(std::shared_ptr<map::state> s)
+bool clique::add_land(std::shared_ptr<state> s)
 {
 	if (s.use_count() == 2) {
 		controlled_land.push_back(s);
@@ -20,7 +20,7 @@ bool clique::add_land(std::shared_ptr<map::state> s)
 	}
 	return false;
 }
-bool clique::remove_land(std::shared_ptr<map::state> s)
+bool clique::remove_land(std::shared_ptr<state> s)
 {
 	for (auto ptr = controlled_land.begin(); ptr < controlled_land.end(); ptr++) {
 		if (*ptr == s) {

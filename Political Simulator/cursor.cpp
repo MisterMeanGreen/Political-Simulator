@@ -9,7 +9,7 @@ void cursor::set_cur_color(WORD color) {
 }
 void cursor::set_cur_pos(COORD crd) {
 	if (!SetConsoleCursorPosition(hConsole, crd)) {
-		//throw L"ERROR : Set console position error\nX : " + crd.X + L"\nY : " + crd.Y;
+		throw L"ERROR : Set console position error\nX : " + std::to_wstring(crd.X) + L"\nY : " + std::to_wstring(crd.Y);
 	}
 }
 wchar_t cursor::get_cur_char(COORD crd)
@@ -24,10 +24,10 @@ WORD cursor::get_cur_charinfo(COORD crd)
 	ReadConsoleOutputAttribute(hConsole, &temp, 1, crd, &num_read);
 	return temp;
 }
-cursor::cursor() : curr_pos({ 0,0 }), curr_char(0), color(0x0f) { draw(); }
-cursor::cursor(COORD pos) : curr_pos(pos), curr_char(0), color(0x0f) { draw(); }
-cursor::cursor(wchar_t chr) : curr_pos({ 0,0 }), curr_char(chr), color(0x0f) { draw(); }
-cursor::cursor(COORD pos, wchar_t chr) : curr_pos(pos), curr_char(chr), color(0x0f) { draw(); }
+cursor::cursor() : cursor({0,0},L'X',0x0f) { }
+cursor::cursor(COORD pos) : cursor(pos, L'X', 0x0f) {  }
+cursor::cursor(wchar_t chr) : cursor({0,0}, chr, 0x0f) { }
+cursor::cursor(COORD pos, wchar_t chr) : cursor(pos, chr, 0x0f) { }
 cursor::cursor(COORD pos, wchar_t chr, WORD clr) : curr_pos(pos), curr_char(chr), color(clr) { draw(); }
 cursor::~cursor() {}
 
@@ -35,6 +35,12 @@ void cursor::move_to(COORD pos)
 {
 	clear();
 	set_pos(pos);
+	draw();
+}
+
+void cursor::redraw()
+{
+	clear();
 	draw();
 }
 

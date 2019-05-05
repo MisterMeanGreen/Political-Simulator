@@ -13,54 +13,86 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Map-Related">
+      <UniqueIdentifier>{1bd2cca6-3e8b-4504-bb21-ba448f758380}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="File-Related">
+      <UniqueIdentifier>{682e839e-019d-430d-9d06-3d4b9068497a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Map-Related\People-Related">
+      <UniqueIdentifier>{81a746e9-900a-483e-8f72-ec4f95547f99}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Map-Related\Nation-Related">
+      <UniqueIdentifier>{0356bf58-062e-45f2-8bb5-7a7717f31c4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="File-Related\Files-To-Be-Loaded">
+      <UniqueIdentifier>{fc8f79a7-1f70-40bf-8362-4d719bb9d930}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="map.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="person.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="effect.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="unicode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="cursor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="map.h">
+      <Filter>Map-Related</Filter>
+    </ClInclude>
+    <ClInclude Include="state.h">
+      <Filter>Map-Related</Filter>
+    </ClInclude>
+    <ClInclude Include="unicode.h">
+      <Filter>File-Related</Filter>
+    </ClInclude>
     <ClInclude Include="load.h">
-      <Filter>Header Files</Filter>
+      <Filter>File-Related</Filter>
+    </ClInclude>
+    <ClInclude Include="person.h">
+      <Filter>Map-Related\People-Related</Filter>
+    </ClInclude>
+    <ClInclude Include="effect.h">
+      <Filter>Map-Related\People-Related</Filter>
     </ClInclude>
     <ClInclude Include="clique.h">
-      <Filter>Header Files</Filter>
+      <Filter>Map-Related\Nation-Related</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="map.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="person.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="effect.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="unicode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="cursor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="map.cpp">
+      <Filter>Map-Related</Filter>
+    </ClCompile>
+    <ClCompile Include="state.cpp">
+      <Filter>Map-Related</Filter>
+    </ClCompile>
+    <ClCompile Include="unicode.cpp">
+      <Filter>File-Related</Filter>
+    </ClCompile>
     <ClCompile Include="load.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>File-Related</Filter>
+    </ClCompile>
+    <ClCompile Include="person.cpp">
+      <Filter>Map-Related\People-Related</Filter>
+    </ClCompile>
+    <ClCompile Include="effect.cpp">
+      <Filter>Map-Related\People-Related</Filter>
     </ClCompile>
     <ClCompile Include="clique.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Map-Related\Nation-Related</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="USA.txt">
+      <Filter>File-Related\Files-To-Be-Loaded</Filter>
+    </Text>
+    <Text Include="traits.txt">
+      <Filter>File-Related\Files-To-Be-Loaded</Filter>
+    </Text>
+    <Text Include="names.txt">
+      <Filter>File-Related\Files-To-Be-Loaded</Filter>
+    </Text>
   </ItemGroup>
 </Project>

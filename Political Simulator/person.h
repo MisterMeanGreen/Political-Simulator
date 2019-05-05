@@ -17,6 +17,7 @@ class person {
 		male = 0, female = 1
 	};
 
+
 	//Used for random number gen
 	static std::random_device rand_dev; 
 	static std::default_random_engine gen;

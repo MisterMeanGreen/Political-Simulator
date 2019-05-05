@@ -124,7 +124,8 @@ person::person(std::wstring p_first_name, std::wstring p_last_name, uint32_t p_a
 	stats[effect::stat_ids::intrigue] = p_intrigue;
 	stats[effect::stat_ids::appeal] = p_appeal;
 	stats[effect::stat_ids::command] = p_command;
-	generate_random_traits();
+	generate_random_traits(); 
+	generate_random_stats();
 } 
 person::person(std::wstring p_first_name, std::wstring p_last_name, uint32_t p_age, bool p_gender, int p_money) : person(p_first_name,p_last_name,p_age,p_gender,p_money,0,0,0,0) {} 
 person::person(uint32_t p_age, int p_money) : person(L"NULL",get_random_item(l_names) , p_age,(dist(gen) < 90 ? male : female), p_money, 0, 0, 0, 0) {

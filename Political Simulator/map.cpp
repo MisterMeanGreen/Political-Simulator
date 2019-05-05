@@ -1,25 +1,26 @@
 #include "map.h"
+state map::nullstate = state();
+map::map(std::wifstream& file) {
+	load_map_files(file);
+}
+map::map(std::wstring file_name)
+{
+	std::wifstream temp(file_name);
+	load_map_files(temp);
+}
+map::~map() {
 
-
-map::state::state(int p_id, std::wstring p_name) {
-	clique_id = p_id;
-	name = p_name;
 }
-map::state::state(int p_id) {
-	clique_id = p_id;
-}
-map::state::~state() {}
-const auto& map::state::get_neighbors() {
-	return neighbors;
-}
-map::state map::load_state(std::wifstream& file, wchar_t& last_char) { //Load a singular state
+state map::load_state(std::wifstream& file, wchar_t& last_char) { //Load a singular state
 	auto load_until = [&](std::wstring chars) { return search_until(file, chars, last_char); };
 	auto load_string = [&]() { return load_quotes(file, last_char); };
 	std::wstring current_text; //current text read
-	state temp_state(0);
+	std::wstring temp_state_name;
+	std::vector<std::wstring> temp_state_neighbors;
+	std::vector<COORD> temp_state_pixels;
 	try {//Loading in name
 		current_text = load_string();
-		temp_state.name = current_text;
+		temp_state_name = current_text;
 	}
 	catch (std::wstring error_recieved) {
 		throw L"ERROR : Failed to load state\n" + error_recieved + L"\n" + current_text;
@@ -27,12 +28,12 @@ map::state map::load_state(std::wifstream& file, wchar_t& last_char) { //Load a 
 	try {//Loading neighbors
 		load_until(L"-");
 		do {
-			temp_state.neighbors.push_back(load_string());
+			temp_state_neighbors.push_back(load_string());
 			load_until(L",-");
 		} while (last_char != '-');
 	}
 	catch (std::wstring error_recieved) {
-		throw L"ERROR : Failed to find neighbors when loading state : L" + error_recieved + L"\n" + temp_state.name;
+		throw L"ERROR : Failed to find neighbors when loading state : L" + error_recieved + L"\n" + temp_state_name;
 	}
 	try { //Loading Pixels
 		load_until(L"{");
@@ -42,7 +43,7 @@ map::state map::load_state(std::wifstream& file, wchar_t& last_char) { //Load a 
 			temp_coord.X = static_cast<SHORT>(stoi(current_text));
 			current_text = load_until(L",}");
 			temp_coord.Y = static_cast<SHORT>(stoi(current_text));
-			temp_state.pixels.push_back(temp_coord);
+			temp_state_pixels.push_back(temp_coord);
 		} while (last_char != '}');
 
 	}
@@ -50,23 +51,13 @@ map::state map::load_state(std::wifstream& file, wchar_t& last_char) { //Load a 
 		throw L"ERROR : Failed to load pixels \n" + error_recieved;
 	}
 	load_until(L"-}");
+	state temp_state(0, temp_state_name, temp_state_neighbors, temp_state_pixels);
 	return temp_state;
 }
-COORD map::state::avg_coord() {
-	COORD temp_avg = { 0,0 };
-	for (auto crd : pixels) {
-		temp_avg.X += crd.X;
-		temp_avg.Y += crd.Y;
-	}
-	temp_avg.X /= static_cast<SHORT>(pixels.size());
-	temp_avg.Y /= static_cast<SHORT>(pixels.size());
-	return temp_avg;
-}
-void map::load_map_files() { //Loads in the map_display and the states information within the map
-	std::wifstream map_file(L"USA.txt");
+void map::load_map_files(std::wifstream& file) { //Loads in the map_display and the states information within the map
 	wchar_t last_char; //Last character found
-	auto load_until = [&](std::wstring chars) { return search_until(map_file, chars, last_char); };
-	auto load_string = [&]() { return load_quotes(map_file, last_char); };
+	auto load_until = [&](std::wstring chars) { return search_until(file, chars, last_char); };
+	auto load_string = [&]() { return load_quotes(file, last_char); };
 	try {
 		load_until(L"M");
 		load_until(L"{");
@@ -78,16 +69,45 @@ void map::load_map_files() { //Loads in the map_display and the states informati
 	load_until(L"D");
 	load_until(L"{");
 	while (last_char != '}') {
-		states.push_back(load_state(map_file, last_char));
+		states.push_back(load_state(file, last_char));
 	}
 }
 void map::render_state(std::wstring wstr, wchar_t chr, WORD color) {
 	for (auto state : states)
-		if (state.name == wstr) {
+		if (state.get_name() == wstr) {
 			cursor::set_cur_color(color);
-			for (auto pixel : state.pixels) {
+			for (auto pixel : state.get_pixels()) {
 				cursor::set_cur_pos(pixel);
 				std::wcout << chr;
 			}
 		}
+}
+state& map::state_at(COORD crd)
+{
+	for (auto& state : states)
+		for (auto& pixel : state.get_pixels())
+			if (crd.X == pixel.X && crd.Y == pixel.Y)
+				return state;
+	return nullstate;
+}
+state& map::operator[](size_t pos)
+{
+	return states[pos];
+}
+std::wstring map::get_display()
+{
+	return display;
+}
+void map::operator()(std::wifstream & file)
+{
+	display = L"";
+	states.clear();
+	load_map_files(file);
+}
+void map::operator()(std::wstring & file_name)
+{
+	std::wifstream file(file_name);
+	display = L"";
+	states.clear();
+	load_map_files(file);
 }
