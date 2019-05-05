@@ -103,17 +103,17 @@ namespace pol_sim {
 	{
 		return stats[stat] = amount;
 	}
-	uint32_t person::pub_id;
+	size_t person::pub_id;
 	std::wstring person::get_first_name() { return first_name; }
 	std::wstring person::get_last_name() { return last_name; }
 	std::wstring person::get_name() { return get_first_name() + L' ' + get_last_name(); }
 	int person::add_money(int amount) { return money += amount; }
 	int person::get_money() { return money; }
 	int person::get_age() { return age; }
-	uint32_t person::get_id() { return id; }
+	size_t person::get_id() { return id; }
 	bool person::get_gender() { return gender == male; }
-	auto& person::operator[](uint32_t c) { return traits[c]; }
-	person::person(std::wstring p_first_name, std::wstring p_last_name, uint32_t p_age, bool p_gender, int p_money, int p_diplomacy, int p_intrigue, int p_appeal, int p_command) : id(++pub_id) {
+	auto& person::operator[](size_t c) { return traits[c]; }
+	person::person(std::wstring p_first_name, std::wstring p_last_name, size_t p_age, bool p_gender, int p_money, int p_diplomacy, int p_intrigue, int p_appeal, int p_command) : id(++pub_id) {
 		stats.resize(effect::stat_ids::STAT_SIZE);
 		first_name = p_first_name;
 		last_name = p_last_name;
@@ -127,8 +127,8 @@ namespace pol_sim {
 		generate_random_traits();
 		generate_random_stats();
 	}
-	person::person(std::wstring p_first_name, std::wstring p_last_name, uint32_t p_age, bool p_gender, int p_money) : person(p_first_name, p_last_name, p_age, p_gender, p_money, 0, 0, 0, 0) {}
-	person::person(uint32_t p_age, int p_money) : person(L"NULL", get_random_item(l_names), p_age, (dist(gen) < 90 ? male : female), p_money, 0, 0, 0, 0) {
+	person::person(std::wstring p_first_name, std::wstring p_last_name, size_t p_age, bool p_gender, int p_money) : person(p_first_name, p_last_name, p_age, p_gender, p_money, 0, 0, 0, 0) {}
+	person::person(size_t p_age, int p_money) : person(L"NULL", get_random_item(l_names), p_age, (dist(gen) < 90 ? male : female), p_money, 0, 0, 0, 0) {
 		if (gender == male)
 			first_name = get_random_item(m_names);
 		else

@@ -36,6 +36,7 @@ namespace pol_sim {
 	{
 		for (auto ptr = controlled_land.begin(); ptr < controlled_land.end(); ptr++) {
 			if (*ptr == s) {
+				s->set_clique_id(state::null);
 				controlled_land.erase(ptr);
 				return true;
 			}

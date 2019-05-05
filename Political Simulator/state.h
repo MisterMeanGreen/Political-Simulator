@@ -5,9 +5,6 @@
 
 namespace pol_sim {
 	class state {
-		enum {
-			null = -1
-		};
 		int population;
 		int income;
 		size_t clique_id; //current clique id controlling it
@@ -15,6 +12,10 @@ namespace pol_sim {
 		std::wstring name; //name of state
 		std::vector<COORD> pixels; //pixels on console
 	public:
+		enum {
+			null = -1
+		};
+
 		//Constructor
 		state(int p_id, std::wstring p_name, std::vector<std::wstring> p_neighbors, std::vector<COORD> p_pixels);
 		state(); //used for null

@@ -27,6 +27,9 @@ namespace pol_sim {
 		size_t get_id();
 		std::wstring get_name();
 
+
+		//TODO PEOPLE
+
 		//Land
 		size_t add_land(state* s); //Adds a state, return previous owner (or itself if no previous owner)
 		bool remove_land(state* s); //Remove a state, returns true if removed state, returns false if it cannot find a state
