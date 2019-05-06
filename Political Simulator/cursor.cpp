@@ -24,11 +24,23 @@ namespace pol_sim {
 		ReadConsoleOutputAttribute(hConsole, &temp, 1, crd, &num_read);
 		return temp;
 	}
+	COORD cursor::get_l_bound()
+	{
+		return lower_B;
+	}
+	COORD cursor::get_h_bound()
+	{
+		return upper_B;
+	}
+	void cursor::set_bounds(COORD lower, COORD upper)
+	{
+		lower_B = lower, upper_B = upper;
+	}
 	cursor::cursor() : cursor({ 0,0 }, L'X', 0x0f) { }
 	cursor::cursor(COORD pos) : cursor(pos, L'X', 0x0f) {  }
 	cursor::cursor(wchar_t chr) : cursor({ 0,0 }, chr, 0x0f) { }
 	cursor::cursor(COORD pos, wchar_t chr) : cursor(pos, chr, 0x0f) { }
-	cursor::cursor(COORD pos, wchar_t chr, WORD clr) : curr_pos(pos), curr_char(chr), color(clr) { draw(); }
+	cursor::cursor(COORD pos, wchar_t chr, WORD clr) : curr_pos(pos), curr_char(chr), color(clr), last_char('\0'), last_color(0), lower_B({ 0,0 }), upper_B({ 120,SHRT_MAX }) {  draw(); }
 	cursor::~cursor() {}
 
 	void cursor::move_to(COORD pos)
@@ -51,7 +63,8 @@ namespace pol_sim {
 
 	void cursor::set_pos(COORD pos)
 	{
-		curr_pos = pos;
+		//Clamp gurantees within bounds
+		curr_pos = { std::clamp(pos.X,lower_B.X,upper_B.X), std::clamp(pos.Y, lower_B.Y, upper_B.Y) };
 	}
 
 	void cursor::set_char(wchar_t chr)

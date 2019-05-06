@@ -9,8 +9,6 @@ namespace pol_sim {
 		leader_id = 0;
 		name = n;
 	}
-
-
 	clique::~clique()
 	{
 		for (auto s : controlled_land)
@@ -29,12 +27,36 @@ namespace pol_sim {
 		for (auto s : controlled_land)
 			map::render_state(*s,symbol,color);
 	}
+	size_t clique::transfer_person(person* p)
+	{
+		for (auto i_p : internal_people)
+			if (p == i_p)
+				return clique_id;
+		size_t temp = p->get_clique_id();
+		p->get_my_clique()->remove_person(p);
+		p->set_my_clique(this);
+		p->set_clique_id(clique_id);
+		internal_people.push_back(p);
+		return temp;
+	}
+	bool clique::remove_person(person* p)
+	{
+		if (p->get_clique_id() != state::null) {
+			for (auto ptr = internal_people.begin(); ptr < internal_people.end(); ptr++) {
+				if (*ptr == p) {
+					p->set_clique_id(state::null);
+					internal_people.erase(ptr);
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 	size_t clique::add_land(state* s)
 	{
 		for (auto c_l : controlled_land)
 			if (s == c_l)
 				return clique_id;
-
 		size_t temp = s->get_clique_id();
 		s->get_my_clique()->remove_land(s);
 		s->set_my_clique(this);

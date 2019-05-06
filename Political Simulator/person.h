@@ -12,7 +12,8 @@
 #include "effect.h"
 
 namespace pol_sim {
-	class person {
+	class clique;
+	class person { //Represents people within the game
 		//Used for random number gen
 		static std::random_device rand_dev;
 		static std::default_random_engine gen;
@@ -28,6 +29,8 @@ namespace pol_sim {
 		static size_t pub_id;
 		size_t id;
 		size_t clique_id;
+
+		clique* my_clique;
 
 		//Stats of the person
 		std::wstring first_name; //Usually Random
@@ -49,6 +52,7 @@ namespace pol_sim {
 		person(std::wstring p_first_name, std::wstring p_last_name, size_t p_age, bool p_gender, int p_money, int p_diplomacy, int p_intrigue, int p_appeal, int p_command);
 		person(std::wstring p_first_name, std::wstring p_last_name, size_t p_age, bool p_gender, int p_money);
 		person(size_t p_age, int p_money);
+		~person();
 
 		//Basic person functionality
 		std::wstring get_first_name();
@@ -60,9 +64,11 @@ namespace pol_sim {
 		bool get_gender();
 		size_t get_id();
 
-		size_t set_clique_id(size_t c_id) {
-			clique_id = c_id;
-		}
+		//Clique Functionality
+		size_t set_clique_id(size_t c_id);
+		size_t get_clique_id();
+		void set_my_clique(clique* c);
+		clique* get_my_clique();
 
 		//Stat functionality
 		int add_stat(size_t stat, int amount); //Change a one of the stats by amount	
@@ -85,7 +91,7 @@ namespace pol_sim {
 		T get_random_item(std::vector<T> list);
 
 		//Loading Files
-		static void load_player_files(); //Loads traits file, names for both females and males, and the last names
+		static void load_player_files(std::wstring trait_name, std::wstring names_list); //Loads traits file, names for both females and males, and the last names
 		static effect load_trait(std::wifstream& file, wchar_t& last_char); //Loads traits from file
 	private:
 		void raw_add(effect trait);

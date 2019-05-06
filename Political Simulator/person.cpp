@@ -1,4 +1,5 @@
 #include "person.h"
+#include "clique.h"
 namespace pol_sim {
 	std::vector<effect>  person::traits_list;
 	std::vector<std::wstring> person::m_names;
@@ -93,6 +94,22 @@ namespace pol_sim {
 	void person::clear_traits() {
 		while (!traits.empty()) remove_trait(traits.back());
 	}
+	size_t person::set_clique_id(size_t c_id)
+	{
+		return clique_id = c_id;
+	}
+	size_t person::get_clique_id()
+	{
+		return clique_id;
+	}
+	void person::set_my_clique(clique* c)
+	{
+		my_clique = c;
+	}
+	clique* person::get_my_clique()
+	{
+		return my_clique;
+	}
 	int person::add_stat(size_t stat, int amount) { //Change a one of the stats by amount
 		return stats[stat] += amount;
 	}
@@ -134,8 +151,12 @@ namespace pol_sim {
 		else
 			first_name = get_random_item(f_names);
 	}
-	void person::load_player_files() { //Loads traits file, names for both females and males, and the last names
-		std::wifstream file(L"traits.txt");
+	person::~person()
+	{
+		my_clique->remove_person(this);
+	}
+	void person::load_player_files(std::wstring trait_name,std::wstring names_list) { //Loads traits file, names for both females and males, and the last names
+		std::wifstream file(trait_name);
 		std::wstring current_text;
 		wchar_t last_char;
 		auto load_until = [&](std::wstring chars) { return search_until(file, chars, last_char); };
@@ -151,7 +172,7 @@ namespace pol_sim {
 			throw L"ERROR : Failed to load Traits file\n" + error_recieved;
 		}
 		file.close();
-		file.open("names.txt"); //Load names
+		file.open(names_list); //Load names
 		try {
 			load_until(L"M");
 			load_until(L"{");

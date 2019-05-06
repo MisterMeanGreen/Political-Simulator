@@ -10,7 +10,7 @@
 #include "cursor.h"
 #include "state.h"
 namespace pol_sim {
-	class map {
+	class map { //Represents the map of the game
 
 		//Where states are stored
 		std::vector<state> states;
@@ -24,6 +24,7 @@ namespace pol_sim {
 		//Constructors
 		map(std::wifstream& file);
 		map(std::wstring file_name);
+		map();
 		~map();
 
 		//Resets and creates new map

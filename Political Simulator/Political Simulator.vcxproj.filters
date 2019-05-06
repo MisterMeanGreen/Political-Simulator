@@ -28,11 +28,11 @@
     <Filter Include="File-Related\Files-To-Be-Loaded">
       <UniqueIdentifier>{fc8f79a7-1f70-40bf-8362-4d719bb9d930}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Console_API Related">
+      <UniqueIdentifier>{b8db4480-8d45-4812-ad8a-6c2533afac4f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="cursor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="map.h">
       <Filter>Map-Related</Filter>
     </ClInclude>
@@ -54,12 +54,15 @@
     <ClInclude Include="clique.h">
       <Filter>Map-Related\Nation-Related</Filter>
     </ClInclude>
+    <ClInclude Include="cursor.h">
+      <Filter>Console_API Related</Filter>
+    </ClInclude>
+    <ClInclude Include="engine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="cursor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="map.cpp">
@@ -83,6 +86,12 @@
     <ClCompile Include="clique.cpp">
       <Filter>Map-Related\Nation-Related</Filter>
     </ClCompile>
+    <ClCompile Include="cursor.cpp">
+      <Filter>Console_API Related</Filter>
+    </ClCompile>
+    <ClCompile Include="engine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="USA.txt">
@@ -92,6 +101,9 @@
       <Filter>File-Related\Files-To-Be-Loaded</Filter>
     </Text>
     <Text Include="names.txt">
+      <Filter>File-Related\Files-To-Be-Loaded</Filter>
+    </Text>
+    <Text Include="paths.txt">
       <Filter>File-Related\Files-To-Be-Loaded</Filter>
     </Text>
   </ItemGroup>

@@ -8,7 +8,7 @@
 namespace pol_sim {
 	class clique;
 
-	class state {
+	class state { //Represents each internal province within the map
 		int population;
 		int income;
 		size_t clique_id; //current clique id controlling it

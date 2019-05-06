@@ -4,9 +4,8 @@
 #include <string>
 #include <atomic>
 
-
 namespace pol_sim {
-	class clique
+	class clique //Represents Nations within the Game
 	{
 		//Used to keep track of new creation of cliques
 		static size_t pub_clique_id;
@@ -36,10 +35,12 @@ namespace pol_sim {
 		//Render
 		void render_clique();
 
-		//TODO PEOPLE
+		//People
+		size_t transfer_person(person* p); //Returns previous owner
+		bool remove_person(person* p); //Remove a state, returns true if removed state, returns false if it cannot find a state
 
 		//Land
-		size_t add_land(state* s); //Adds a state, return previous owner (or itself if no previous owner)
+		size_t add_land(state* s); //Adds a state, return previous owner id (or itself if no previous owner)
 		bool remove_land(state* s); //Remove a state, returns true if removed state, returns false if it cannot find a state
 	};
 }

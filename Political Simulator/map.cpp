@@ -8,6 +8,9 @@ namespace pol_sim {
 		std::wifstream temp(file_name);
 		load_map_files(temp);
 	}
+	map::map()
+	{
+	}
 	map::~map() {
 
 	}

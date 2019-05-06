@@ -154,6 +154,7 @@
     <ClInclude Include="clique.h" />
     <ClInclude Include="cursor.h" />
     <ClInclude Include="effect.h" />
+    <ClInclude Include="engine.h" />
     <ClInclude Include="load.h" />
     <ClInclude Include="map.h" />
     <ClInclude Include="person.h" />
@@ -164,6 +165,7 @@
     <ClCompile Include="clique.cpp" />
     <ClCompile Include="cursor.cpp" />
     <ClCompile Include="effect.cpp" />
+    <ClCompile Include="engine.cpp" />
     <ClCompile Include="load.cpp" />
     <ClCompile Include="map.cpp" />
     <ClCompile Include="person.cpp" />
@@ -173,6 +175,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="names.txt" />
+    <Text Include="paths.txt" />
     <Text Include="traits.txt" />
     <Text Include="USA.txt" />
   </ItemGroup>

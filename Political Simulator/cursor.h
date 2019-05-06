@@ -5,6 +5,9 @@
 //WCOUT
 #include <iostream>
 
+//BOUNDS
+#include <algorithm>
+
 //TO_WSTRING
 #include <string>
 namespace pol_sim {
@@ -22,6 +25,10 @@ namespace pol_sim {
 		//Used for Windows API functions
 		static HANDLE hConsole;
 		static DWORD num_read;
+
+		//Bounds
+		COORD lower_B;
+		COORD upper_B;
 	public:
 		//Constructors
 		cursor();
@@ -57,5 +64,12 @@ namespace pol_sim {
 		//API Console Read
 		static wchar_t get_cur_char(COORD crd); //gets character at crd
 		static WORD get_cur_charinfo(COORD crd); //gets character info at crd
+
+		//Get Bounds
+		COORD get_l_bound();
+		COORD get_h_bound();
+
+		//Set Bounds
+		void set_bounds(COORD lower, COORD upper);
 	};
 }
