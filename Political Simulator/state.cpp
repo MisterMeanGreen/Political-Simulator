@@ -1,16 +1,20 @@
 #include "state.h"
 
 namespace pol_sim {
-	state::state(int p_id, std::wstring p_name, std::vector<std::wstring> p_neighbors, std::vector<COORD> p_pixels)
+	state::state(std::wstring p_name, std::vector<std::wstring> p_neighbors, std::vector<COORD> p_pixels,int p_inc,int p_pop,clique* c_ptr)
 	{
-		clique_id = p_id;
+		income = p_inc;
+		population = p_pop;
 		name = p_name;
 		neighbors = p_neighbors;
 		pixels = p_pixels;
+		my_clique = c_ptr;
 	}
 	state::state() {
-		clique_id = state::null;
+		income = 0;
+		population = 0;
 		name = L"NULL";
+		my_clique = nullptr;
 	}
 	state::~state() {}
 	bool state::is_neighbor(std::wstring p_neighbor)
@@ -31,17 +35,9 @@ namespace pol_sim {
 	{
 		return name;
 	}
-	size_t state::get_clique_id()
-	{
-		return clique_id;
-	}
 	clique * state::get_my_clique()
 	{
 		return my_clique;
-	}
-	size_t state::set_clique_id(size_t id)
-	{
-		return clique_id = id;
 	}
 	std::wstring state::set_name(std::wstring new_name)
 	{

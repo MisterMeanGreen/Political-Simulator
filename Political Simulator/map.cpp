@@ -55,7 +55,7 @@ namespace pol_sim {
 			throw L"ERROR : Failed to load pixels \n" + error_recieved;
 		}
 		seek(L"-}");
-		state temp_state(state::null, temp_state_name, temp_state_neighbors, temp_state_pixels);
+		state temp_state(temp_state_name, temp_state_neighbors, temp_state_pixels,0,0,nullptr);
 		return temp_state;
 	}
 	void map::load_map_files(std::wifstream& file) { //Loads in the map_display and the states information within the map

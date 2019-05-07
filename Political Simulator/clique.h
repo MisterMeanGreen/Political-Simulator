@@ -40,7 +40,7 @@ namespace pol_sim {
 		bool remove_person(person* p); //Remove a state, returns true if removed state, returns false if it cannot find a state
 
 		//Land
-		size_t add_land(state* s); //Adds a state, return previous owner id (or itself if no previous owner)
+		clique* add_land(state* s); //Adds a state, return previous owner (or itself if no previous owner)
 		bool remove_land(state* s); //Remove a state, returns true if removed state, returns false if it cannot find a state
 	};
 }

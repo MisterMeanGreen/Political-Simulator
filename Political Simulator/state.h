@@ -11,7 +11,6 @@ namespace pol_sim {
 	class state { //Represents each internal province within the map
 		int population;
 		int income;
-		size_t clique_id; //current clique id controlling it
 		std::vector<std::wstring> neighbors; //neighboring states
 		std::wstring name; //name of state
 		std::vector<COORD> pixels; //pixels on console
@@ -23,7 +22,7 @@ namespace pol_sim {
 		};
 
 		//Constructor
-		state(int p_id, std::wstring p_name, std::vector<std::wstring> p_neighbors, std::vector<COORD> p_pixels);
+		state(std::wstring p_name, std::vector<std::wstring> p_neighbors, std::vector<COORD> p_pixels, int p_inc, int p_pop, clique* c_ptr);
 		state(); //used for null
 		~state();
 
@@ -37,11 +36,9 @@ namespace pol_sim {
 		//Get
 		const std::vector<COORD>& get_pixels();
 		std::wstring get_name(); //returns name
-		size_t get_clique_id();
 		clique* get_my_clique();
 
 		//Set
-		size_t set_clique_id(size_t id);
 		std::wstring set_name(std::wstring new_name); //returns name
 		void set_my_clique(clique* c);
 	};
