@@ -19,7 +19,7 @@ namespace pol_sim {
 		clique* my_clique;
 	public:
 		enum {
-			null = -1
+			null = 4294967295
 		};
 
 		//Constructor

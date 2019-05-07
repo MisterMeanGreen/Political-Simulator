@@ -4,7 +4,6 @@
 #include <iostream>
 #include <fstream>
 #include <Windows.h>
-#include <atomic>
 
 #include "load.h"
 #include "cursor.h"

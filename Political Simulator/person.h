@@ -28,7 +28,6 @@ namespace pol_sim {
 		//ID
 		static size_t pub_id;
 		size_t id;
-		size_t clique_id;
 
 		clique* my_clique;
 
@@ -49,9 +48,9 @@ namespace pol_sim {
 		};
 
 		//Constructors
-		person(std::wstring p_first_name, std::wstring p_last_name, size_t p_age, bool p_gender, int p_money, int p_diplomacy, int p_intrigue, int p_appeal, int p_command);
-		person(std::wstring p_first_name, std::wstring p_last_name, size_t p_age, bool p_gender, int p_money);
-		person(size_t p_age, int p_money);
+		person(std::wstring p_first_name, std::wstring p_last_name, size_t p_age, bool p_gender, int p_money, int p_diplomacy, int p_intrigue, int p_appeal, int p_command, clique* c);
+		person(std::wstring p_first_name, std::wstring p_last_name, size_t p_age, bool p_gender, int p_money, clique* c);
+		person(size_t p_age, int p_money, clique* c);
 		~person();
 
 		//Basic person functionality
@@ -65,8 +64,6 @@ namespace pol_sim {
 		size_t get_id();
 
 		//Clique Functionality
-		size_t set_clique_id(size_t c_id);
-		size_t get_clique_id();
 		void set_my_clique(clique* c);
 		clique* get_my_clique();
 

@@ -27,29 +27,26 @@ namespace pol_sim {
 		for (auto s : controlled_land)
 			map::render_state(*s,symbol,color);
 	}
-	size_t clique::transfer_person(person* p)
+	clique* clique::transfer_person(person* p)
 	{
 		for (auto i_p : internal_people)
 			if (p == i_p)
-				return clique_id;
-		size_t temp = p->get_clique_id();
+				return this;
+		clique* temp = p->get_my_clique();
 		p->get_my_clique()->remove_person(p);
 		p->set_my_clique(this);
-		p->set_clique_id(clique_id);
 		internal_people.push_back(p);
 		return temp;
 	}
 	bool clique::remove_person(person* p)
 	{
-		if (p->get_clique_id() != state::null) {
-			for (auto ptr = internal_people.begin(); ptr < internal_people.end(); ptr++) {
+		for (auto ptr = internal_people.begin(); ptr < internal_people.end(); ptr++) {
 				if (*ptr == p) {
-					p->set_clique_id(state::null);
+					p->set_my_clique(nullptr);
 					internal_people.erase(ptr);
 					return true;
 				}
 			}
-		}
 		return false;
 	}
 	size_t clique::add_land(state* s)

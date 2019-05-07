@@ -94,14 +94,6 @@ namespace pol_sim {
 	void person::clear_traits() {
 		while (!traits.empty()) remove_trait(traits.back());
 	}
-	size_t person::set_clique_id(size_t c_id)
-	{
-		return clique_id = c_id;
-	}
-	size_t person::get_clique_id()
-	{
-		return clique_id;
-	}
 	void person::set_my_clique(clique* c)
 	{
 		my_clique = c;
@@ -130,7 +122,8 @@ namespace pol_sim {
 	size_t person::get_id() { return id; }
 	bool person::get_gender() { return gender == male; }
 	auto& person::operator[](size_t c) { return traits[c]; }
-	person::person(std::wstring p_first_name, std::wstring p_last_name, size_t p_age, bool p_gender, int p_money, int p_diplomacy, int p_intrigue, int p_appeal, int p_command) : id(++pub_id) {
+	person::person(std::wstring p_first_name, std::wstring p_last_name, size_t p_age, bool p_gender, int p_money, int p_diplomacy, int p_intrigue, int p_appeal, int p_command, clique* c) : id(++pub_id) {
+		my_clique = c;
 		stats.resize(effect::stat_ids::STAT_SIZE);
 		first_name = p_first_name;
 		last_name = p_last_name;
@@ -144,8 +137,8 @@ namespace pol_sim {
 		generate_random_traits();
 		generate_random_stats();
 	}
-	person::person(std::wstring p_first_name, std::wstring p_last_name, size_t p_age, bool p_gender, int p_money) : person(p_first_name, p_last_name, p_age, p_gender, p_money, 0, 0, 0, 0) {}
-	person::person(size_t p_age, int p_money) : person(L"NULL", get_random_item(l_names), p_age, (dist(gen) < 90 ? male : female), p_money, 0, 0, 0, 0) {
+	person::person(std::wstring p_first_name, std::wstring p_last_name, size_t p_age, bool p_gender, int p_money, clique* c) : person(p_first_name, p_last_name, p_age, p_gender, p_money, 0, 0, 0, 0, c) {}
+	person::person(size_t p_age, int p_money, clique* c) : person(L"NULL", get_random_item(l_names), p_age, (dist(gen) < 90 ? male : female), p_money, 0, 0, 0, 0,c) {
 		if (gender == male)
 			first_name = get_random_item(m_names);
 		else
@@ -156,14 +149,15 @@ namespace pol_sim {
 		my_clique->remove_person(this);
 	}
 	void person::load_player_files(std::wstring trait_name,std::wstring names_list) { //Loads traits file, names for both females and males, and the last names
-		std::wifstream file(trait_name);
+		std::wifstream file(trait_name, std::ios::binary);
 		std::wstring current_text;
 		wchar_t last_char;
 		auto load_until = [&](std::wstring chars) { return search_until(file, chars, last_char); };
+		auto seek = [&](std::wstring chars) { return seek_until(file, chars, last_char); };
 		auto load_string = [&]() { return load_quotes(file, last_char); };
 		try { //Attempt to load traits
-			load_until(L"T");
-			load_until(L"{");
+			seek(L"T");
+			seek(L"{");
 			while (last_char != L'}') { //Load traits
 				traits_list.push_back(person::load_trait(file, last_char));
 			}
@@ -172,10 +166,10 @@ namespace pol_sim {
 			throw L"ERROR : Failed to load Traits file\n" + error_recieved;
 		}
 		file.close();
-		file.open(names_list); //Load names
+		file.open(names_list,std::ios::binary); //Load names
 		try {
-			load_until(L"M");
-			load_until(L"{");
+			seek(L"M");
+			seek(L"{");
 			do {
 				m_names.push_back(load_until(L",}"));
 			} while (last_char != '}');
@@ -184,8 +178,8 @@ namespace pol_sim {
 			throw L"ERROR : Failed to load male names\n" + error_recieved;
 		}
 		try {
-			load_until(L"F");
-			load_until(L"{");
+			seek(L"F");
+			seek(L"{");
 			do {
 				f_names.push_back(load_until(L",}"));
 			} while (last_char != '}');
@@ -194,8 +188,8 @@ namespace pol_sim {
 			throw L"ERROR : Failed to load female names\n" + error_recieved;
 		}
 		try {
-			load_until(L"L");
-			load_until(L"{");
+			seek(L"L");
+			seek(L"{");
 			do {
 				l_names.push_back(load_until(L",}"));
 			} while (last_char != '}');
@@ -210,11 +204,12 @@ namespace pol_sim {
 		try {
 			std::wstring current_text; //Text currently read
 			auto load_until = [&](std::wstring chars) { return search_until(file, chars, last_char); };
+			auto seek = [&](std::wstring chars) { return seek_until(file, chars, last_char); };
 			auto load_string = [&]() { return load_quotes(file, last_char); };
 			temp_effect.name = load_string();
-			load_until(L",");
+			seek(L",");
 			temp_effect.description = load_string();
-			load_until(L",");
+			seek(L",");
 			for (size_t current_stat_id = 0; current_stat_id < 4; current_stat_id++) {
 				try {
 					current_text = load_until(L",");
@@ -224,13 +219,13 @@ namespace pol_sim {
 					throw L"ERROR : Cannot Assign " + effect_stat_id_names[current_stat_id] + L"\n\"" + current_text + L"\" could not be assigned.";
 				}
 			}
-			load_until(L"[");
+			seek(L"[");
 			do {
 				current_text = load_string();
 				temp_effect.negative_traits.push_back(current_text);
-				load_until(L",]");
+				seek(L",]");
 			} while (last_char != ']');
-			load_until(L",}");
+			seek(L",}");
 		}
 		catch (std::wstring error_recieved) {
 			throw L"Failed to load trait\n" + error_recieved + L"\nName : L" + temp_effect.name + L"\nDesc : L" + temp_effect.description + L"\nDiplomacy : L" + std::to_wstring(temp_effect.get_stat(effect::stat_ids::diplomacy)) + L"\nIntrigue : L" + std::to_wstring(temp_effect.get_stat(effect::stat_ids::intrigue)) + L"\nAppeal : L" + std::to_wstring(temp_effect.get_stat(effect::stat_ids::appeal)) + L"\nCommand : L" + std::to_wstring(temp_effect.get_stat(effect::stat_ids::command));

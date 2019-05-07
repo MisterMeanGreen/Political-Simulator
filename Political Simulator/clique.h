@@ -36,7 +36,7 @@ namespace pol_sim {
 		void render_clique();
 
 		//People
-		size_t transfer_person(person* p); //Returns previous owner
+		clique* transfer_person(person* p); //Returns previous owner
 		bool remove_person(person* p); //Remove a state, returns true if removed state, returns false if it cannot find a state
 
 		//Land

@@ -16,6 +16,7 @@ namespace pol_sim {
 	}
 	state map::load_state(std::wifstream& file, wchar_t& last_char) { //Load a singular state
 		auto load_until = [&](std::wstring chars) { return search_until(file, chars, last_char); };
+		auto seek = [&](std::wstring chars) { return seek_until(file, chars, last_char); };
 		auto load_string = [&]() { return load_quotes(file, last_char); };
 		std::wstring current_text; //current text read
 		std::wstring temp_state_name;
@@ -29,17 +30,17 @@ namespace pol_sim {
 			throw L"ERROR : Failed to load state\n" + error_recieved + L"\n" + current_text;
 		}
 		try {//Loading neighbors
-			load_until(L"-");
+			seek(L"-");
 			do {
 				temp_state_neighbors.push_back(load_string());
-				load_until(L",-");
+				seek(L",-");
 			} while (last_char != '-');
 		}
 		catch (std::wstring error_recieved) {
 			throw L"ERROR : Failed to find neighbors when loading state : L" + error_recieved + L"\n" + temp_state_name;
 		}
 		try { //Loading Pixels
-			load_until(L"{");
+			seek(L"{");
 			do {
 				COORD temp_coord;
 				current_text = load_until(L",");
@@ -53,24 +54,25 @@ namespace pol_sim {
 		catch (std::wstring error_recieved) {
 			throw L"ERROR : Failed to load pixels \n" + error_recieved;
 		}
-		load_until(L"-}");
+		seek(L"-}");
 		state temp_state(state::null, temp_state_name, temp_state_neighbors, temp_state_pixels);
 		return temp_state;
 	}
 	void map::load_map_files(std::wifstream& file) { //Loads in the map_display and the states information within the map
 		wchar_t last_char; //Last character found
 		auto load_until = [&](std::wstring chars) { return search_until(file, chars, last_char); };
+		auto seek = [&](std::wstring chars) { return seek_until(file, chars, last_char); };
 		auto load_string = [&]() { return load_quotes(file, last_char); };
 		try {
-			load_until(L"M");
-			load_until(L"{");
+			seek(L"M");
+			seek(L"{");
 			display = load_until(L"}");
 		}
 		catch (std::wstring exp) {
 			throw L"ERROR : Failed to read display for map_file\n" + exp + L"\nData Read : " + display;
 		}
-		load_until(L"D");
-		load_until(L"{");
+		seek(L"D");
+		seek(L"{");
 		while (last_char != '}') {
 			states.push_back(load_state(file, last_char));
 		}
@@ -124,7 +126,7 @@ namespace pol_sim {
 	}
 	void map::operator()(std::wstring & file_name)
 	{
-		std::wifstream file(file_name);
+		std::wifstream file(file_name, std::ios::binary);
 		display = L"";
 		states.clear();
 		load_map_files(file);
