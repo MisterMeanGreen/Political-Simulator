@@ -2,7 +2,7 @@
 #include "map.h"
 #include "person.h"
 #include <string>
-#include <atomic>
+#include <vector>
 
 namespace pol_sim {
 	class clique //Represents Nations within the Game
@@ -37,7 +37,7 @@ namespace pol_sim {
 
 		//People
 		clique* transfer_person(person* p); //Returns previous owner
-		bool remove_person(person* p); //Remove a state, returns true if removed state, returns false if it cannot find a state
+		bool remove_person(person* p); //Remove a person, returns true if removed a person, returns false if it cannot find a person
 
 		//Land
 		clique* add_land(state* s); //Adds a state, return previous owner (or itself if no previous owner)

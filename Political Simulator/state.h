@@ -16,6 +16,7 @@ namespace pol_sim {
 		std::vector<COORD> pixels; //pixels on console
 
 		clique* my_clique;
+		size_t my_clique_id;
 	public:
 		enum {
 			null = 4294967295
@@ -37,9 +38,11 @@ namespace pol_sim {
 		const std::vector<COORD>& get_pixels();
 		std::wstring get_name(); //returns name
 		clique* get_my_clique();
+		size_t get_my_clique_id();
 
 		//Set
 		std::wstring set_name(std::wstring new_name); //returns name
-		void set_my_clique(clique* c);
+		clique* set_my_clique(clique* c);
+		size_t set_my_clique_id(size_t _id);
 	};
 }

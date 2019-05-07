@@ -35,6 +35,7 @@ namespace pol_sim {
 		clique* temp = p->get_my_clique();
 		p->get_my_clique()->remove_person(p);
 		p->set_my_clique(this);
+		p->set_my_clique_id(clique_id);
 		internal_people.push_back(p);
 		return temp;
 	}
@@ -43,6 +44,7 @@ namespace pol_sim {
 		for (auto ptr = internal_people.begin(); ptr < internal_people.end(); ptr++) {
 				if (*ptr == p) {
 					p->set_my_clique(nullptr);
+					p->set_my_clique_id(state::null);
 					internal_people.erase(ptr);
 					return true;
 				}
@@ -51,26 +53,22 @@ namespace pol_sim {
 	}
 	clique* clique::add_land(state* s)
 	{
-		for (auto c_l : controlled_land)
-			if (s == c_l)
-				return this;
+		if (std::find_if(controlled_land.begin(), controlled_land.end(), [&](state * c) {return c == s; }) != controlled_land.end())
+			return this;
 		clique* temp = s->get_my_clique();
-		s->get_my_clique()->remove_land(s);
+		if(s->get_my_clique() != nullptr)
+			s->get_my_clique()->remove_land(s);
 		s->set_my_clique(this);
+		s->set_my_clique_id(clique_id);
 		controlled_land.push_back(s);
 		return temp;
 
 	}
 	bool clique::remove_land(state* s)
 	{
-		if (s->get_my_clique() == this) {
-			for (auto ptr = controlled_land.begin(); ptr < controlled_land.end(); ptr++) {
-				if (*ptr == s) {
-					controlled_land.erase(ptr);
-					return true;
-				}
-			}
-		}
+		if (s->get_my_clique() == this)
+			if (auto ptr = std::find_if(controlled_land.begin(), controlled_land.end(), [&](state * c) {return c == s; }); ptr != controlled_land.end())
+					return controlled_land.erase(ptr), true;
 		return false;
 	}
 }

@@ -94,13 +94,21 @@ namespace pol_sim {
 	void person::clear_traits() {
 		while (!traits.empty()) remove_trait(traits.back());
 	}
-	void person::set_my_clique(clique* c)
+	clique* person::set_my_clique(clique* c)
 	{
-		my_clique = c;
+		return my_clique = c;
 	}
 	clique* person::get_my_clique()
 	{
 		return my_clique;
+	}
+	size_t person::set_my_clique_id(size_t _id)
+	{
+		return my_clique_id = _id;
+	}
+	size_t person::get_my_clique_id()
+	{
+		return my_clique_id;
 	}
 	int person::add_stat(size_t stat, int amount) { //Change a one of the stats by amount
 		return stats[stat] += amount;

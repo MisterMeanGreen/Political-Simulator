@@ -16,11 +16,12 @@
 namespace pol_sim {
 	class engine
 	{
+
+	public:
 		map game_map;
 		std::list<person> people;
 		std::list<clique> nations;
 		std::vector<std::wstring> path_names;
-	public:
 		engine(std::wstring paths);
 		~engine();
 		void render_map();

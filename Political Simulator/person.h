@@ -30,6 +30,7 @@ namespace pol_sim {
 		size_t id;
 
 		clique* my_clique;
+		size_t my_clique_id;
 
 		//Stats of the person
 		std::wstring first_name; //Usually Random
@@ -64,8 +65,10 @@ namespace pol_sim {
 		size_t get_id();
 
 		//Clique Functionality
-		void set_my_clique(clique* c);
+		clique* set_my_clique(clique* c);
 		clique* get_my_clique();
+		size_t set_my_clique_id(size_t _id);
+		size_t get_my_clique_id();
 
 		//Stat functionality
 		int add_stat(size_t stat, int amount); //Change a one of the stats by amount	
