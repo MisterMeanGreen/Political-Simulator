@@ -10,17 +10,17 @@ namespace pol_sim {
 	std::uniform_int_distribution<int> person::dist(0, 99);
 	void person::raw_add(effect trait) {
 		traits.push_back(trait);
-		add_stat(effect::stat_ids::diplomacy, traits.back().get_stat(effect::stat_ids::diplomacy));
-		add_stat(effect::stat_ids::intrigue, traits.back().get_stat(effect::stat_ids::intrigue));
-		add_stat(effect::stat_ids::appeal, traits.back().get_stat(effect::stat_ids::appeal));
-		add_stat(effect::stat_ids::command, traits.back().get_stat(effect::stat_ids::command));
+		add_stat(effect::stat_ids::diplomacy, traits.back().get_stat(L"diplomacy"));
+		add_stat(effect::stat_ids::intrigue, traits.back().get_stat(L"intrigue"));
+		add_stat(effect::stat_ids::appeal, traits.back().get_stat(L"appeal"));
+		add_stat(effect::stat_ids::command, traits.back().get_stat(L"command"));
 	}
 	bool person::remove_trait(uint16_t trait_num) {//Removes a Single Trait at Postion X
 		if (trait_num < traits.size() - 1) {
-			add_stat(effect::stat_ids::diplomacy, -traits.back().get_stat(effect::stat_ids::diplomacy));
-			add_stat(effect::stat_ids::intrigue, -traits.back().get_stat(effect::stat_ids::intrigue));
-			add_stat(effect::stat_ids::appeal, -traits.back().get_stat(effect::stat_ids::appeal));
-			add_stat(effect::stat_ids::command, -traits.back().get_stat(effect::stat_ids::command));
+			add_stat(effect::stat_ids::diplomacy, -traits.back().get_stat(L"diplomacy"));
+			add_stat(effect::stat_ids::intrigue, -traits.back().get_stat(L"intrigue"));
+			add_stat(effect::stat_ids::appeal, -traits.back().get_stat(L"appeal"));
+			add_stat(effect::stat_ids::command, -traits.back().get_stat(L"command"));
 			traits.erase(traits.begin() + trait_num);
 			return true;
 		}
@@ -29,19 +29,19 @@ namespace pol_sim {
 	bool person::remove_trait(std::wstring name) { //Remove trait via name
 		auto trait_itt = traits.begin();
 		uint16_t trait_num = 0;
-		while (trait_itt->name != name && trait_num < (traits.size() - 1)) {
+		while (trait_itt->get_name() != name && trait_num < (traits.size() - 1)) {
 			trait_itt++;
 			trait_num++;
 		}
 		return remove_trait(trait_num);
 	}
 	bool person::remove_trait(effect trait) { //Remove trait via another trait
-		return remove_trait(trait.name);
+		return remove_trait(trait.get_name());
 	}
 	bool person::add_trait_no_remove(effect trait) { //Add a single trait
 		for (auto curr_trait : traits) {
 			for (auto my_neg_trait : trait.negative_traits) {
-				if (curr_trait.name == my_neg_trait) {
+				if (curr_trait.get_name() == my_neg_trait) {
 					remove_trait(curr_trait);
 					return false;
 				}
@@ -51,7 +51,7 @@ namespace pol_sim {
 				return false;
 			}
 			for (auto neg_trait : curr_trait.negative_traits) {
-				if (neg_trait == trait.name) {
+				if (neg_trait == trait.get_name()) {
 					remove_trait(neg_trait);
 					return false;
 				}
@@ -63,11 +63,11 @@ namespace pol_sim {
 	bool person::add_trait(effect trait) { //Add a single trait
 		for (auto curr_trait : traits) {
 			for (auto my_neg_trait : trait.negative_traits) {
-				if (curr_trait.name == my_neg_trait) return false;
+				if (curr_trait.get_name() == my_neg_trait) return false;
 			}
 			if (curr_trait == trait) return false;
 			for (auto neg_trait : curr_trait.negative_traits) {
-				if (neg_trait == trait.name) return false;
+				if (neg_trait == trait.get_name()) return false;
 			}
 		}
 		raw_add(trait);
@@ -129,7 +129,7 @@ namespace pol_sim {
 	int person::get_age() { return age; }
 	size_t person::get_id() { return id; }
 	bool person::get_gender() { return gender == male; }
-	auto& person::operator[](size_t c) { return traits[c]; }
+	auto person::operator[](size_t c) { return traits[c]; }
 	person::person(std::wstring p_first_name, std::wstring p_last_name, size_t p_age, bool p_gender, int p_money, int p_diplomacy, int p_intrigue, int p_appeal, int p_command, clique* c) : id(++pub_id) {
 		my_clique = c;
 		stats.resize(effect::stat_ids::STAT_SIZE);
@@ -156,25 +156,57 @@ namespace pol_sim {
 	{
 		my_clique->remove_person(this);
 	}
-	void person::load_player_files(std::wstring trait_name,std::wstring names_list) { //Loads traits file, names for both females and males, and the last names
+	void person::load_player_files(std::wstring trait_name, std::wstring names_list) {
 		std::wifstream file(trait_name, std::ios::binary);
-		std::wstring current_text;
 		wchar_t last_char;
+		std::wstring last_text;
+		auto seek = [&](const std::wstring & chrs) { return seek_until(file, chrs, last_char); };
 		auto load_until = [&](std::wstring chars) { return search_until(file, chars, last_char); };
-		auto seek = [&](std::wstring chars) { return seek_until(file, chars, last_char); };
-		auto load_string = [&]() { return load_quotes(file, last_char); };
-		try { //Attempt to load traits
-			seek(L"T");
-			seek(L"{");
-			while (last_char != L'}') { //Load traits
-				traits_list.push_back(person::load_trait(file, last_char));
+		auto search_quotes = [&]() { return load_quotes(file, last_char); };
+		try {
+			seek(L"{;");
+			while (last_char != L';') { //Simple shitty file reader REDO AT SOMEPOINT
+				std::wstring current_text;
+				std::wstring name;
+				std::wstring description;
+				std::map<std::wstring, int> effect_attributes;
+				std::vector<std::wstring> effect_negative_traits;
+				if (search_quotes() == L"name") {
+					seek(L"=");
+					name = search_quotes();
+					seek(L",");
+				}
+				if (search_quotes() == L"description") {
+					seek(L"=");
+					description = search_quotes();
+					seek(L",");
+				}
+				while ((current_text = search_quotes()) != L"end") { //Load attributes
+					seek(L"=");
+					if (current_text != L"negative_traits") {
+						ignore_white_space(file);
+						effect_attributes[current_text] = stoi(search_until(file, L",", last_char));
+					}
+					else {
+						seek(L"{");
+						while (last_char != L'}') {
+							effect_negative_traits.push_back(search_quotes());
+							seek(L",}");
+						}
+					}
+				}
+				seek(L"}");
+				person::traits_list.push_back(effect(name, description, effect_attributes, effect_negative_traits));
+				seek(L",;");
+				if (last_char == L',')
+					seek(L"{");
 			}
 		}
 		catch (std::wstring error_recieved) {
-			throw L"ERROR : Failed to load Traits file\n" + error_recieved;
+			throw L"ERROR : Failed to load traits\n" + error_recieved;
 		}
 		file.close();
-		file.open(names_list,std::ios::binary); //Load names
+		file.open(names_list, std::ios::binary); //Load names
 		try {
 			seek(L"M");
 			seek(L"{");
@@ -205,39 +237,5 @@ namespace pol_sim {
 		catch (std::wstring error_recieved) {
 			throw L"ERROR : Failed to load last names\n" + error_recieved;
 		}
-	}
-	effect person::load_trait(std::wifstream& file, wchar_t& last_char) { //Loads trait from file
-		effect temp_effect;
-		std::vector<std::wstring> effect_stat_id_names({ L"Diplomacy",L"Intrigue",L"Appeal",L"Command" });
-		try {
-			std::wstring current_text; //Text currently read
-			auto load_until = [&](std::wstring chars) { return search_until(file, chars, last_char); };
-			auto seek = [&](std::wstring chars) { return seek_until(file, chars, last_char); };
-			auto load_string = [&]() { return load_quotes(file, last_char); };
-			temp_effect.name = load_string();
-			seek(L",");
-			temp_effect.description = load_string();
-			seek(L",");
-			for (size_t current_stat_id = 0; current_stat_id < 4; current_stat_id++) {
-				try {
-					current_text = load_until(L",");
-					temp_effect.set_stat(current_stat_id, stoi(current_text));
-				}
-				catch (...) {
-					throw L"ERROR : Cannot Assign " + effect_stat_id_names[current_stat_id] + L"\n\"" + current_text + L"\" could not be assigned.";
-				}
-			}
-			seek(L"[");
-			do {
-				current_text = load_string();
-				temp_effect.negative_traits.push_back(current_text);
-				seek(L",]");
-			} while (last_char != ']');
-			seek(L",}");
-		}
-		catch (std::wstring error_recieved) {
-			throw L"Failed to load trait\n" + error_recieved + L"\nName : L" + temp_effect.name + L"\nDesc : L" + temp_effect.description + L"\nDiplomacy : L" + std::to_wstring(temp_effect.get_stat(effect::stat_ids::diplomacy)) + L"\nIntrigue : L" + std::to_wstring(temp_effect.get_stat(effect::stat_ids::intrigue)) + L"\nAppeal : L" + std::to_wstring(temp_effect.get_stat(effect::stat_ids::appeal)) + L"\nCommand : L" + std::to_wstring(temp_effect.get_stat(effect::stat_ids::command));
-		}
-		return temp_effect;
 	}
 }

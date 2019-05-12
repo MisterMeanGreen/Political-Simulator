@@ -10,7 +10,7 @@
 
 //Used for traits
 #include "effect.h"
-
+#include <map>
 namespace pol_sim {
 	class clique;
 	class person { //Represents people within the game
@@ -76,7 +76,7 @@ namespace pol_sim {
 		int set_stat(size_t stat, int amount); //Set a stat to amount
 
 		//Trait functionality
-		auto& operator[](size_t c);
+		auto operator[](size_t c);
 		bool remove_trait(uint16_t trait_num); //Removes a Single Trait at Postion X
 		bool remove_trait(std::wstring name); //Remove trait via name
 		bool remove_trait(effect trait); //Remove trait via another trait
@@ -92,7 +92,6 @@ namespace pol_sim {
 
 		//Loading Files
 		static void load_player_files(std::wstring trait_name, std::wstring names_list); //Loads traits file, names for both females and males, and the last names
-		static effect load_trait(std::wifstream& file, wchar_t& last_char); //Loads traits from file
 	private:
 		void raw_add(effect trait);
 	};

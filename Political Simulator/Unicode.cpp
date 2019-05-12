@@ -10,7 +10,6 @@ void init_locale(void)
 	constexpr char cp_utf16le[] = ".1200"; // UTF-16 little-endian locale.
 	setlocale(LC_ALL, cp_utf16le);
 	_setmode(_fileno(stdout), _O_WTEXT);
-	/* Repeat for _fileno(stdin), if needed. */
 #else
 	// The correct locale name may vary by OS, e.g., "en_US.utf8".
 	constexpr char locale_name[] = "";
